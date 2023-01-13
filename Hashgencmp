@@ -1,0 +1,116 @@
+import sys
+import os
+import zlib
+import hashlib
+import time
+if sys.version_info < (3, 6): 
+    import sha3 
+print ("Start : %s" % time.ctime())
+start_time = time.time()
+BLOCKSIZE=65536
+f=0
+M0 = '7b1d97fa65ec99ac858b9559c864e3ec' 
+S0 = 'd6ceacb9f0a30497947b7bf45cfe01dd34fd1023'
+Sha256_0 = 'ef951bba52802ac8f06c30504688175647e9cbdc664e2ba920f4d1a2a6ec4ae6'
+M1 = hashlib.md5()
+S1 = hashlib.sha1()
+Sha256_1 = hashlib.sha256()
+Sha3512_1 = hashlib.sha3_512()
+File_1='C:/Users/Sumanth Kommineni/Desktop/FinalProject/Important/SecretKey.txt'
+afile1 = open(File_1, 'rb')
+buf1 = afile1.read(BLOCKSIZE)
+M1.update(buf1)
+S1.update(buf1)
+Sha256_1.update(buf1)
+Sha3512_1.update(buf1)
+md5_a=(str(M1.hexdigest()))
+Sha1_a=(str(S1.hexdigest()))
+Sha256_a=(str(Sha256_1.hexdigest()))
+Sha3512_a=(str(Sha3512_1.hexdigest()))
+print("Generating Hash Values...")
+print("MD5 = ",md5_a)
+print("SHA1 = ",Sha1_a)
+print("SHA256 = ",Sha256_a)
+print("SHA3_512",Sha3512_a)
+print(len(md5_a))
+print(len(Sha1_a))
+print(len(Sha256_a))
+print(len(Sha3512_a))
+M2 = hashlib.md5()
+S2 = hashlib.sha1()
+Sha256_2 = hashlib.sha256()
+Sha3512_2=hashlib.sha3_512()
+File_2=input('Enter the exact file location: ')
+afile2 = open(File_2, 'rb')
+buf2 = afile2.read(BLOCKSIZE)
+M2.update(buf2)
+S2.update(buf2)
+Sha256_2.update(buf2)
+Sha3512_2.update(buf2)
+md5_b=(str(M2.hexdigest()))
+Sha1_b=(str(S2.hexdigest()))
+Sha256_b=(str(Sha256_2.hexdigest()))
+Sha3512_b=(str(Sha3512_2.hexdigest()))
+print("Generating hash values of suspicious file...")
+print("MD5 = ",md5_b)
+print("SHA1 = ",Sha1_b)
+print("SHA256 = ",Sha256_b)
+print("SHA3_512",Sha3512_b)
+print("Performing Hash Comparision...")
+if(md5_a==md5_b):
+    print("    X     Md5 Matched   X")
+    f=f+1
+else:
+    print("    !     Md5 NOT Matched   !")
+if(Sha1_a==Sha1_b):
+    print("   XX    Sha1 Matched   XX ")
+    f=f+1
+else:
+    print("   !!    Sha1 NOT Matched   !! ")
+if(Sha256_a==Sha256_b):
+    print("  XXX  Sha 256 Matched  XXX")
+    f=f+1
+else:
+    print("  !!!  Sha 256 NOT Matched  !!!")
+if(Sha3512_a==Sha3512_b):
+    print(" XXXX Sha3_512 Matched  XXXX")
+    f=f+1
+else:
+    print(" !!!! Sha3_512 NOT Matched  !!!!")
+if(f==4):
+    print("! Warning ! Theft Detected - Same File Found !")
+elif f>0 and f<4 :
+    print("Hash collision Occured !! ")
+    f=0
+else:
+    print("No Hash matched - Different files")
+    print("Perform a manual check for file integrity !")
+print("If you also want to perform a crc32 Enter 1 else 0")
+X=int(input("Enter your option('1' or '0') : "))
+if X==1:
+    print("performing Cyclic Redundency check..")
+    #For CRC32
+    def crc(fileName):
+        prev = 0
+        for eachLine in open(fileName,"rb"):
+            prev = zlib.crc32(eachLine, prev)
+        return "%X"%(prev & 0xFFFFFFFF)
+    for eachFile in sys.argv[1:]:
+        crc(eachFile)
+    CRC32_1=crc(File_1)
+    print("CRC32 Of Actual File = ",CRC32_1)
+    CRC32_2=crc(File_2)
+    print("CRC32 Of Suspicious File = ",CRC32_2)
+    if CRC32_1 == CRC32_2:
+        print("XXX CRC32 MATCHED XXX")
+        print("Please take necessary actions")
+    else:
+        print("CRC32 NOT MATCHED")
+        
+
+elif X==0:
+    print("CRC32 Not Validated")
+print("Thank you '_'")
+print ("End : %s" % time.ctime())
+print("--- %s seconds ---" % (time.time() - start_time))
+time.sleep(5)
